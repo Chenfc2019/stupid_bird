@@ -8,6 +8,7 @@
 
 import re
 import random
+from datetime import datetime
 from flask import abort
 from multiprocessing import Value
 from sqlalchemy import func
@@ -351,13 +352,20 @@ class PostArticleCtrl(object):
                        body_id=body_id,
                        view_counts=setting.INITIAL_VIEW_COUNTS,
                        weight=weight, category_id=category_id)
-        need_add_tags = assert_new_tag_in_tags(all_tags_for_new_post)
+        # need_add_tags = assert_new_tag_in_tags(all_tags_for_new_post)
+
         # 正常函数不应该走到这里，因为前面已经添加了用户自主添加的，此处主要是刚开始写的代码不完善
-        if need_add_tags:
-            tag_poster.new_multi_tags(need_add_tags)
-        for tag_name in all_tags_for_new_post:
-            tag_obj = Tag.query.filter_by(tag_name=tag_name).one()
-            post.tags.append(tag_obj)
+        # if need_add_tags:
+        #     tag_poster.new_multi_tags(need_add_tags)
+
+        tag_objs = db.session.query(Tag).filter(Tag.tag_name.in_(list(all_tags_for_new_post))).all()
+        # tag_objs = Tag.query.filter_by().all()
+        post.tags = tag_objs
+        post.update_date = datetime.now()
+
+        # for tag_name in all_tags_for_new_post:
+        #     tag_obj = Tag.query.filter_by(tag_name=tag_name).one()
+        #     post.tags.append(tag_obj)
 
         db.session.add(post)
         db.session.commit()

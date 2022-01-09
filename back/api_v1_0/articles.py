@@ -179,12 +179,12 @@ class IdentifyPostDetail(BaseResource):
     def __init__(self):
         self.response_obj = {'success': True, 'code': 0, 'data': None, 'msg': ''}
 
-    def get(self):
+    def get(self, identifier):
         """
         获得指定 identifier 对应的文章
-        :return: json,
+        :return: json
         """
-        identifier = request.args.get('identifier')
+        # identifier = request.args.get('identifier')
         post_id = article_post_ctrl.get_post_id_by_identifier(identifier)
         post = abort_if_not_exist(post_id)
         post_info = article_get_ctrl.post_detail(post)
@@ -312,6 +312,53 @@ class ArticleDetail(BaseResource):
         return self.return_json_data(data=self.response_obj, code=204)
         # return jsonify_with_args(self.response_obj, 204)
 
+
+class SlugApi(BaseResource):
+    def __init__(self):
+        self.response_obj = {'success': True, 'code': 0, 'data': None, 'msg': ''}
+
+    def get(self):
+        """
+        根据输入的中文标题返回英文翻译（调用百度翻译API）
+        :return:
+        """
+        args = request.args
+        title = args.get('title')
+        try:
+            assert title
+        except AssertionError:
+            self.response_obj['code'] = 1
+            self.response_obj['success'] = False
+            self.response_obj['msg'] = 'Args title is required.'
+            return self.jsonify_with_args(self.response_obj, 412)
+        slug = article_post_ctrl.parse_trans_en2cn(title)
+        self.response_obj['data'] = slug
+        return jsonify(self.response_obj)
+
+
+class IdApi(BaseResource):
+    def __init__(self):
+        self.response_obj = {'success': True, 'code': 0, 'data': None, 'msg': ''}
+
+    def get(self):
+        """
+        根据输入的中文标题返回英文翻译（调用百度翻译API）
+        :return:
+        """
+        args = request.args
+        identifier = args.get('identifier')
+        try:
+            assert identifier
+        except AssertionError:
+            self.response_obj['code'] = 1
+            self.response_obj['success'] = False
+            self.response_obj['msg'] = 'Args identifier is required.'
+            return self.jsonify_with_args(self.response_obj, 412)
+        data = dict()
+        post_id = article_post_ctrl.get_post_id_by_identifier(identifier)
+        data['postId'] = post_id
+        self.response_obj['data'] = data
+        return jsonify(self.response_obj)
 
 
 
