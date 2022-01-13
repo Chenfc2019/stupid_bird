@@ -47,9 +47,10 @@ class Config(object):
     def init_app(app):
         pass
 
+
 class MySQLConfig:
-    MYSQL_USERNAME = os.getenv('MYSQL_USER', 'root')
-    MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', '123456')
+    MYSQL_USERNAME = os.getenv('MYSQL_USER')
+    MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD')
     MYSQL_DB = os.getenv('MYSQL_DB')
     MYSQL_HOST = 'localhost:3306'
     MYSQL_CHARSET = 'utf8mb4'  # 为了支持 emoji 显示，需要设置为 utf8mb4 编码
@@ -62,14 +63,14 @@ class DevelopmentConfig(Config):
                               f'@{MySQLConfig.MYSQL_HOST}/{database}?charset={MySQLConfig.MYSQL_CHARSET}'
 
 
-class ProductionConfig(Config):
-    database = MySQLConfig.MYSQL_DB or 'myblog_product'
+class ProduceionConfig(Config):
+    database = MySQLConfig.MYSQL_DB
     SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{MySQLConfig.MYSQL_USERNAME}:{MySQLConfig.MYSQL_PASSWORD}' \
                               f'@{MySQLConfig.MYSQL_HOST}/{database}?charset={MySQLConfig.MYSQL_CHARSET}'
 
 
 env_config = {
     'dev': DevelopmentConfig,
-    'product': ProductionConfig
+    'produce': ProduceionConfig
 }
 

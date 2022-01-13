@@ -4,9 +4,6 @@
 # @Author ：orange
 # @Date ：2021/11/28 下午8:35
 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate

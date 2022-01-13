@@ -8,7 +8,15 @@ import os
 
 from back import create_app, setting
 
-app = create_app(os.getenv('FLASK_CONFIG', 'dev'))
+env = os.getenv('stupid_env', 'dev')
+print(f'running env: {env}')
+app = create_app(env)
+
+
+@app.route('/index')
+def index():
+    return 'hello'
+
 
 if __name__ == '__main__':
     host_ip = setting.HOST_IP

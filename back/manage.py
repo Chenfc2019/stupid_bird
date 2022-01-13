@@ -8,7 +8,8 @@
 import os
 from back import create_app
 
-env = os.environ.get('stupid_env', 'dev')
+env = os.getenv('stupid_env')
+print(f'running env: {env}')
 app = create_app(env)
 
 @app.route('/index')
